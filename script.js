@@ -26,9 +26,31 @@ document.addEventListener('keydown', (event) => { if (event.key === 'Escape') to
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
+  const values = Object.fromEntries(new FormData(form).entries());
+  const application = [
+    'MUHABURA SHINE SECONDARY SCHOOL - 2026 APPLICATION',
+    '',
+    `Learner name: ${values.learnerName}`,
+    `Date of birth: ${values.dateOfBirth}`,
+    `Class applying for: ${values.classLevel}`,
+    `School option: ${values.schoolOption}`,
+    `Previous school: ${values.previousSchool || 'Not provided'}`,
+    `Parent/guardian: ${values.guardianName}`,
+    `Phone: ${values.phone}`,
+    `Email: ${values.email}`
+  ].join('\n');
+  const backup = new Blob([application], { type: 'text/plain' });
+  const backupLink = document.createElement('a');
+  backupLink.href = URL.createObjectURL(backup);
+  backupLink.download = `muhabura-shine-application-${values.learnerName.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '2026'}.txt`;
+  backupLink.click();
+  URL.revokeObjectURL(backupLink.href);
+  const subject = encodeURIComponent(`2026 application - ${values.learnerName}`);
+  const body = encodeURIComponent(application);
+  window.location.href = `mailto:muhaburashine@gmail.com?subject=${subject}&body=${body}`;
+  success.textContent = 'Application prepared. Your email app will open, and a backup copy was downloaded.';
   success.classList.add('show');
-  form.reset();
-  setTimeout(() => { success.classList.remove('show'); toggleModal(false); }, 2600);
+  setTimeout(() => { success.classList.remove('show'); toggleModal(false); form.reset(); }, 6000);
 });
 
 document.querySelectorAll('.programme').forEach((programme) => {
